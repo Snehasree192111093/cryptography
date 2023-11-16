@@ -1,0 +1,38 @@
+#include <stdio.h>
+int gcd(int a, int b) {
+    while (b) a %= b, a ^= b ^= a ^= b;
+    return a;
+}
+int mod_inverse(int a, int m) {
+    for (int x = 1; x < m; x++)
+        if (((a % m) * (x % m)) % m == 1)
+            return x;
+    return -1;
+}
+void generate_keys(int p, int q, int *n, int *e, int *d) {
+    for (*n = p * q, *e = 2; *e < (p - 1) * (q - 1) && gcd(*e, (p - 1) * (q - 1)) != 1; (*e)++); *d = mod_inverse(*e, (p - 1) * (q - 1));
+}
+int power(int base, int exp, int mod) {
+    int result = 1;
+    while (exp) {
+        if (exp % 2) result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+int encrypt(int plaintext, int e, int n) {
+    return power(plaintext, e, n);
+}
+int decrypt(int ciphertext, int d, int n) {
+    return power(ciphertext, d, n);
+}
+int main() {
+    int p = 61, q = 53, n, e, d, plaintext;
+    generate_keys(p, q, &n, &e, &d);
+    printf("Enter plaintext message (an integer): ");
+    scanf("%d", &plaintext);
+    printf("Encrypted message: %d\n", encrypt(plaintext, e, n));
+    printf("Decrypted message: %d\n", decrypt(encrypt(plaintext, e, n), d, n));
+    return 0;
+}
