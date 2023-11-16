@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+void vigenereEncrypt(char text[], char key[]) {
+    int textLen = strlen(text);
+    int keyLen = strlen(key);   
+    for (int i = 0; i < textLen; i++) {
+        if (text[i] >= 'A' && text[i] <= 'Z') {
+            text[i] = ((text[i] - 'A' + key[i % keyLen] - 'A') % 26) + 'A';
+        } else if (text[i] >= 'a' && text[i] <= 'z') {
+            text[i] = ((text[i] - 'a' + key[i % keyLen] - 'a') % 26) + 'a';
+        }
+    }
+}
+void vigenereDecrypt(char text[], char key[]) {
+    int textLen = strlen(text);
+    int keyLen = strlen(key);
+    for (int i = 0; i < textLen; i++) {
+        if (text[i] >= 'A' && text[i] <= 'Z') {
+            text[i] = ((text[i] - 'A' - (key[i % keyLen] - 'A') + 26) % 26) + 'A';
+        } else if (text[i] >= 'a' && text[i] <= 'z') {
+            text[i] = ((text[i] - 'a' - (key[i % keyLen] - 'a') + 26) % 26) + 'a';
+        }
+    }
+}
+int main() {
+    char plaintext[] = "geeksforgeeks";
+    char key[] = "ayush";                   
+    printf("Original Text: %s\n", plaintext);    
+    vigenereEncrypt(plaintext, key);
+    printf("Encrypted Text: %s\n", plaintext);    
+    vigenereDecrypt(plaintext, key);
+    printf("Decrypted Text: %s\n", plaintext);   
+    return 0;
+}
