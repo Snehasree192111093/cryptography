@@ -1,30 +1,45 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-void hill_encrypt(char *message, int key[2][2]) {
-    int len = strlen(message);
-    if (len % 2 != 0) {
-        printf("Message length must be even for a 2x2 matrix.\n");
-        return;
-    }
-    for (int i = 0; i < len; i++) {
-        message[i] = toupper(message[i]);
-    }
-    for (int i = 0; i < len; i += 2) {
-        int char1 = message[i] - 'A';
-        int char2 = message[i + 1] - 'A';
-        message[i] = (key[0][0] * char1 + key[0][1] * char2) % 26 + 'A';
-        message[i + 1] = (key[1][0] * char1 + key[1][1] * char2) % 26 + 'A';
+
+void hillCipherEncrypt(char *input, int *keyMatrix, int matrixSize) {
+    int len = strlen(input);
+
+    for (int i = 0; i < len; i += matrixSize) {
+        for (int j = 0; j < matrixSize; ++j) {
+            int result = 0;
+            for (int k = 0; k < matrixSize; ++k) {
+                result += keyMatrix[j * matrixSize + k] * (toupper(input[i + k]) - 'A');
+            }
+            result %= 26;
+            printf("%c", result + 'A');
+        }
     }
 }
+
 int main() {
-    char message[100];
-    int key[2][2] = {{2, 1}, {3, 4}};
-    printf("Enter the message to be encrypted (uppercase): ");
-    fgets(message, sizeof(message), stdin);
-    message[strcspn(message, "\n")] = 0;
-    hill_encrypt(message, key);
-    printf("Encrypted Message: %s\n", message);
+    char input[100];
+    int keyMatrix[9];
+    int matrixSize;
+
+    printf("Enter the matrix size (2 or 3):\n");
+    scanf("%d", &matrixSize);
+
+    if (matrixSize != 2 && matrixSize != 3) {
+        printf("Invalid matrix size. Please enter 2 or 3.\n");
+        return 1;
+    }
+
+    printf("Enter the key matrix elements:\n");
+    for (int i = 0; i < matrixSize * matrixSize; ++i) {
+        scanf("%d", &keyMatrix[i]);
+    }
+
+    printf("Enter the message to encrypt (in uppercase, without spaces):\n");
+    scanf("%s", input);
+
+    printf("Encrypted message: ");
+    hillCipherEncrypt(input, keyMatrix, matrixSize);
+
     return 0;
 }
